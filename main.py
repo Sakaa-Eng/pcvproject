@@ -18,7 +18,7 @@ def close_window():
     camera.release()
     cv2.destroyAllWindows()
     exit()
-
+#testing pcv
 def main (): 
     while True:
         # Ubah _ menjadi ret untuk menangkap status keberhasilan baca frame
