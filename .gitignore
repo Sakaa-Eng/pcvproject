@@ -1,2 +1,6 @@
 projectpcv/
-.venv/  
+.venv/
+face_ref.xml
+main.py
+tesreadme.md
+README.md
