@@ -55,12 +55,23 @@ class Game:
         self.soal = soal
         self.jwb = jwb
         self.bola.clear()
-        for v in pilihan:
-            x = random.randint(RADIUS + 5, W - RADIUS - 5)
-            y = -RADIUS - random.randint(0, 80)
+
+        # bagi layar jadi 4 zona biar gak dempet
+        zone_w = W // 4
+        zona = list(range(4))
+        random.shuffle(zona)
+
+        for i, v in enumerate(pilihan):
+            z = zona[i]
+            x_min = z * zone_w + RADIUS + 5
+            x_max = (z + 1) * zone_w - RADIUS - 5
+            x = random.randint(x_min, x_max)
+            # y disebar biar muncul bergantian bukan barengan
+            y = -RADIUS - i * 60
             benar = (v == jwb)
             warna = (0, 180, 0) if benar else (0, 0, 200)
             self.bola.append([x, y, v, benar, warna])
+
 
     def update(self):
         if self.over:
