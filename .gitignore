@@ -3,4 +3,9 @@ projectpcv/
 face_ref.xml
 main.py
 tesreadme.md
-README.md
+__pycache__/
+*.pyc
+tanda tangan.jpeg
+game.md
+project.md
+tahapan/
