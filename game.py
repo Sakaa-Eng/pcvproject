@@ -77,7 +77,7 @@ class Game:
             # y disebar biar muncul bergantian bukan barengan
             y = -RADIUS - i * 60
             benar = (v == jwb)
-            warna = (0, 180, 0) if benar else (0, 0, 200)
+            warna = (180, 80, 0)
             self.bola.append([x, y, v, benar, warna])
 
 
