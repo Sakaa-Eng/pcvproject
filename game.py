@@ -98,7 +98,7 @@ class Game:
             if (mx1 - RADIUS < bx < mx2 + RADIUS) and (my1 - RADIUS < by < my2 + RADIUS):
                 if b[3]:
                     self.skor += POIN_BENAR
-                    self.pesan = "+10 Benar!"
+                    self.pesan = "+1 MBG"
                 else:
                     self.skor += POIN_SALAH
                     self.nyawa -= 1
@@ -198,39 +198,98 @@ def putar_musik(path):
         print(f"gagal putar musik: {e}")
 
 
+def buka_kamera():
+    backends = [cv2.CAP_MSMF, cv2.CAP_DSHOW, 0]
+    for i in [0, 1, 2]:
+        for backend in backends:
+            try:
+                c = cv2.VideoCapture(i, backend) if backend != 0 else cv2.VideoCapture(i)
+                if c.isOpened():
+                    ok, _ = c.read()
+                    if ok:
+                        c.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                        c.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                        print(f"[kamera index {i} aktif]")
+                        return c
+                c.release()
+            except:
+                continue
+    print("[kamera tidak ditemukan, pakai keyboard]")
+    return None
+
+
 def main():
+    from project import detect_hand
+
     lagu = cari_lagu("music")
     putar_musik(lagu)
     nama_lagu = os.path.basename(lagu) if lagu else ""
+
+    cam = buka_kamera()
 
     cv2.namedWindow("Math Bowl")
     canvas = np.ones((H, W, 3), dtype=np.uint8) * 210
     game = Game()
 
+    frame     = None
+    hand_det  = False
+
     while True:
         key = cv2.waitKey(30) & 0xFF
+
+        # baca kamera dan deteksi tangan
+        if cam:
+            ret, frame = cam.read()
+            if ret:
+                frame = cv2.flip(frame, 1)
+                det      = detect_hand(frame)
+                hand_det = det["hand_detected"]
+                if hand_det and not game.over:
+                    # tangan hanya menggerakkan mangkok secara horizontal
+                    target_x = det["hand_x"]
+                    target_x = max(MK_W // 2 + 5, min(W - MK_W // 2 - 5, target_x))
+                    # smooth sedikit
+                    game.mk_x += int((target_x - game.mk_x) * 0.5)
 
         if key == ord("q") or key == 27:
             break
 
         if not game.over:
-            if key == ord("a") or key == 81:
-                game.mk_x = max(MK_W // 2 + 5, game.mk_x - MK_SPEED)
-            elif key == ord("d") or key == 83:
-                game.mk_x = min(W - MK_W // 2 - 5, game.mk_x + MK_SPEED)
+            # keyboard sebagai fallback kalau tangan tidak terdeteksi
+            if not hand_det:
+                if key == ord("a") or key == 81:
+                    game.mk_x = max(MK_W // 2 + 5, game.mk_x - MK_SPEED)
+                elif key == ord("d") or key == 83:
+                    game.mk_x = min(W - MK_W // 2 - 5, game.mk_x + MK_SPEED)
             game.update()
         else:
             if key == ord("r"):
                 game.reset()
 
         game.draw(canvas)
-        # tampilkan nama lagu di pojok kanan bawah
+
+        # preview kamera kecil di pojok kanan bawah
+        if cam and frame is not None:
+            prev = cv2.resize(frame, (160, 120))
+            if hand_det and det["bbox"]:
+                bx, by, bw, bh = det["bbox"]
+                cv2.rectangle(prev,
+                    (int(bx * 160 / 640), int(by * 120 / 480)),
+                    (int((bx + bw) * 160 / 640), int((by + bh) * 120 / 480)),
+                    (0, 255, 0), 1)
+            canvas[H - 120:H, W - 160:W] = prev
+            status = "tangan OK" if hand_det else "tangan -"
+            warna_s = (0, 180, 0) if hand_det else (0, 0, 200)
+            cv2.putText(canvas, status, (W - 158, H - 123), FONT, 0.35, warna_s, 1)
+
         if nama_lagu:
-            cv2.putText(canvas, f"musik: {nama_lagu}", (W - 250, H - 12),
+            cv2.putText(canvas, f"musik: {nama_lagu}", (8, H - 12),
                         FONT, 0.32, (120, 120, 120), 1)
 
         cv2.imshow("Math Bowl", canvas)
 
+    if cam:
+        cam.release()
     if MUSIK:
         pygame.mixer.music.stop()
     cv2.destroyAllWindows()
@@ -238,3 +297,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
