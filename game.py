@@ -1,6 +1,14 @@
 import cv2
 import numpy as np
 import random
+import os
+
+try:
+    import pygame
+    pygame.mixer.init()
+    MUSIK = True
+except:
+    MUSIK = False
 
 
 W = 640
@@ -162,7 +170,39 @@ class Game:
             cv2.putText(canvas, "tekan R untuk main lagi", (155, 308), FONT, 0.52, (200, 200, 200), 1)
 
 
+def cari_lagu(folder="music"):
+    if not MUSIK:
+        return None
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(f"folder '{folder}' dibuat, masukkan file musik (.mp3/.wav/.ogg) ke sana")
+        return None
+    ekstensi = ('.mp3', '.wav', '.ogg')
+    files = [f for f in os.listdir(folder) if f.lower().endswith(ekstensi)]
+    if not files:
+        print(f"tidak ada file musik di folder '{folder}'")
+        return None
+    pilihan = random.choice(files)
+    return os.path.join(folder, pilihan)
+
+
+def putar_musik(path):
+    if not MUSIK or path is None:
+        return
+    try:
+        pygame.mixer.music.load(path)
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)  # loop terus
+        print(f"memutar: {os.path.basename(path)}")
+    except Exception as e:
+        print(f"gagal putar musik: {e}")
+
+
 def main():
+    lagu = cari_lagu("music")
+    putar_musik(lagu)
+    nama_lagu = os.path.basename(lagu) if lagu else ""
+
     cv2.namedWindow("Math Bowl")
     canvas = np.ones((H, W, 3), dtype=np.uint8) * 210
     game = Game()
@@ -184,8 +224,15 @@ def main():
                 game.reset()
 
         game.draw(canvas)
+        # tampilkan nama lagu di pojok kanan bawah
+        if nama_lagu:
+            cv2.putText(canvas, f"musik: {nama_lagu}", (W - 250, H - 12),
+                        FONT, 0.32, (120, 120, 120), 1)
+
         cv2.imshow("Math Bowl", canvas)
 
+    if MUSIK:
+        pygame.mixer.music.stop()
     cv2.destroyAllWindows()
 
 
