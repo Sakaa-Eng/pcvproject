@@ -5,19 +5,6 @@
 ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat&logo=numpy&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Playable-brightgreen?style=flat)
 
-## Daftar Isi
-
-- [Overview](#overview)
-- [Fitur Utama](#fitur-utama)
-- [Dependencies](#dependencies)
-- [Cara Build dan Run Project](#cara-build-dan-run-project)
-- [Cara Bermain](#cara-bermain)
-- [Input dan Deteksi](#input-dan-deteksi)
-- [Dokumentasi Demo](#dokumentasi-demo)
-- [Implementasi Teknis](#implementasi-teknis)
-- [Struktur File](#struktur-file)
-- [Progress](#progress)
-- [Catatan Kalibrasi](#catatan-kalibrasi)
 
 ## Overview
 
@@ -209,129 +196,50 @@ Jika tangan tidak terdeteksi, game otomatis memakai kontrol keyboard.
 
 ## Dokumentasi Demo
 
-Folder dokumentasi demo sudah disiapkan di dalam `docs/`.
+Berikut adalah screenshot gameplay Math Bowl tanpa deteksi tangan (mode keyboard).
 
-```text
-docs/
-|-- screenshots/     # Simpan foto atau screenshot demo di sini
-`-- videos/          # Simpan video demo gameplay di sini
-```
+### Menu
 
-### Foto atau Screenshot
+**Menu Utama** — Tampilan awal saat game dijalankan via `main_menu.py`.
 
-Tambahkan screenshot gameplay ke folder `docs/screenshots/`. Rekomendasi file
-yang bisa dimasukkan:
+![Menu Utama](docs/screenshots/menu_utama.png)
 
-| Dokumentasi | Lokasi File |
-|-------------|-------------|
-| Tampilan main menu | `docs/screenshots/main-menu.png` |
-| Mode tebak jawaban | `docs/screenshots/mode-tebak-jawaban.png` |
-| Mode tebak operasi matematika | `docs/screenshots/mode-tebak-operasi.png` |
-| Deteksi sarung tangan biru | `docs/screenshots/deteksi-sarung-tangan.png` |
-| Tampilan game over | `docs/screenshots/game-over.png` |
+**Pilih Mode** — Setelah START dipilih, pemain memilih antara dua mode permainan.
 
-Setelah file dimasukkan, gambar dapat ditampilkan di README dengan format:
+![Pilih Mode](docs/screenshots/pilih_mode.png)
 
-```md
-![Main Menu](docs/screenshots/main-menu.png)
-![Mode Tebak Jawaban](docs/screenshots/mode-tebak-jawaban.png)
-![Mode Tebak Operasi](docs/screenshots/mode-tebak-operasi.png)
-![Deteksi Sarung Tangan](docs/screenshots/deteksi-sarung-tangan.png)
-```
+---
 
-### Video Demo
+### Mode 1: Tebak Jawaban
 
-Tambahkan video demo ke folder `docs/videos/`. Rekomendasi file yang bisa
-dimasukkan:
+**Gameplay** — Soal muncul di header, empat bola jatuh dari atas. Tiga indikator nyawa ditampilkan di pojok kanan atas.
 
-| Dokumentasi | Lokasi File |
-|-------------|-------------|
-| Demo gameplay lengkap | `docs/videos/demo-math-bowl.mp4` |
-| Demo mode tebak jawaban | `docs/videos/demo-mode-tebak-jawaban.mp4` |
-| Demo mode tebak operasi | `docs/videos/demo-mode-tebak-operasi.mp4` |
+![Mode 1 Gameplay](docs/screenshots/mode1_gameplay.png)
 
-Setelah video dimasukkan, tautkan video di README dengan format:
+**Jawaban Benar** — Mangkok berhasil menangkap bola yang benar. Pesan `+1 MBG` dan skor bertambah.
 
-```md
-[Lihat Demo Gameplay](docs/videos/demo-math-bowl.mp4)
-```
+![Mode 1 Benar](docs/screenshots/mode1_benar.png)
 
-Jika video diunggah melalui GitHub user attachments, tautan video juga bisa
-ditempel langsung pada bagian ini.
+**Game Over** — Semua nyawa habis. Skor akhir ditampilkan beserta opsi restart dengan tombol `R`.
 
-## Implementasi Teknis
+![Mode 1 Game Over](docs/screenshots/mode1_gameover.png)
 
-Project ini dibagi menjadi beberapa modul kecil agar menu, gameplay, dan
-Computer Vision lebih mudah dikembangkan.
+---
 
-### `main_menu.py`
+### Mode 2: Tebak Operasi Matematika
 
-File ini menjadi entry point utama project. Modul ini membuat jendela menu
-dengan OpenCV, menangani navigasi pilihan, lalu menjalankan mode game yang
-dipilih pemain.
+**Gameplay** — Nilai target ditampilkan di header. Tujuh bola statis tersebar berisi angka dan operator. Kursor tangan (kotak merah) digerakkan dengan keyboard.
 
-Alur implementasi:
+![Mode 2 Gameplay](docs/screenshots/mode2_gameplay.png)
 
-1. Membuat canvas menu berukuran 640 x 480.
-2. Menampilkan tombol `START` dan `QUIT`.
-3. Setelah `START`, menampilkan pilihan mode game.
-4. Menjalankan `game.py` untuk mode tebak jawaban.
-5. Menjalankan `game_mode2.py` untuk mode tebak operasi matematika.
+**Ekspresi Benar** — Pemain menyentuh bola-bola membentuk ekspresi yang valid. Pesan `bonus mbg 100` muncul dan soal baru digenerate.
 
-### `game.py`
+![Mode 2 Benar](docs/screenshots/mode2_benar.png)
 
-File ini berisi mode **Tebak Jawaban**. Soal matematika dibuat secara acak,
-lalu beberapa bola jawaban dijatuhkan dari atas layar. Pemain harus menangkap
-bola yang berisi jawaban benar.
+**Game Over** — Semua nyawa habis. Skor akhir ditampilkan beserta opsi restart dengan tombol `R`.
 
-Komponen implementasi:
+![Mode 2 Game Over](docs/screenshots/mode2_gameover.png)
 
-- `buat_soal()` membuat soal penjumlahan atau pengurangan beserta pilihan
-  jawaban.
-- Class `Game` menyimpan skor, nyawa, posisi mangkok, daftar bola, dan status
-  game over.
-- `update()` mengatur gerakan bola, collision dengan mangkok, pengurangan
-  nyawa, dan pergantian soal.
-- `draw()` menggambar UI, soal, bola, mangkok, skor, nyawa, pesan feedback, dan
-  game over screen.
-- `buka_kamera()` mencari webcam aktif dari beberapa index dan backend.
-
-### `game_mode2.py`
-
-File ini berisi mode **Tebak Operasi Matematika**. Pemain memilih bola angka
-dan operator untuk membentuk ekspresi yang menghasilkan target tertentu.
-
-Komponen implementasi:
-
-- `buat_soal()` membuat target hasil dari operasi matematika acak.
-- `buat_bola()` membuat bola angka, operator benar, dan distraktor.
-- Class `Bola` menyimpan posisi, label, status pilihan, dan urutan sentuhan.
-- Class `Game` menyimpan ekspresi yang sedang dipilih pemain.
-- Method `_cek()` mencari pola `angka operator angka`, menghitung hasilnya, dan
-  menentukan apakah jawaban benar.
-
-### `project.py`
-
-File ini menjadi modul Computer Vision untuk mendeteksi sarung tangan atau
-objek berwarna biru.
-
-Komponen implementasi:
-
-- `blue_mask()` mengubah frame ke HSV dan membuat mask warna biru.
-- `clean_mask()` membersihkan noise dengan blur, threshold, erode, dan dilate.
-- `valid_contour()` memfilter contour berdasarkan area dan solidity.
-- `detect_hand()` mengambil contour valid terbesar, mencari pusat telapak
-  dengan distance transform, lalu mengembalikan koordinat tangan.
-- `draw_detection()` menggambar bounding box, pusat tangan, radius telapak, dan
-  status deteksi untuk debugging.
-- `calibrate()` mengubah rentang HSV berdasarkan area tengah frame.
-
-### Integrasi Kamera dan Keyboard
-
-Kedua mode game memakai `detect_hand(frame)` dari `project.py`. Jika tangan
-terdeteksi, koordinat tangan dipakai sebagai kontrol utama. Jika tidak
-terdeteksi atau webcam tidak tersedia, kontrol keyboard tetap bisa digunakan
-agar game masih dapat dimainkan.
 
 ## Struktur File
 
@@ -360,21 +268,6 @@ pcvproject/
 Jika folder `music/` belum ada, `game.py` akan mencoba membuat folder tersebut
 saat mode 1 dijalankan. Pada mode 2, musik hanya diputar jika folder dan file
 musik sudah tersedia.
-
-## Progress
-
-| Status | Keterangan |
-|--------|------------|
-| [x] | Main menu dengan pilihan start dan quit |
-| [x] | Pemilihan dua mode permainan |
-| [x] | Mode tebak jawaban dengan bola jatuh |
-| [x] | Mode susun angka dan operator |
-| [x] | Deteksi objek biru berbasis HSV |
-| [x] | Validasi contour dan smoothing posisi tangan |
-| [x] | Keyboard fallback ketika kamera tidak tersedia |
-| [x] | Score, nyawa, restart, dan game over |
-| [x] | Preview kamera kecil di layar game |
-| [x] | Musik background opsional dengan `pygame` |
 
 ## Catatan Kalibrasi
 
