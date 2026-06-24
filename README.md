@@ -196,6 +196,16 @@ Jika tangan tidak terdeteksi, game otomatis memakai kontrol keyboard.
 
 ## Dokumentasi Demo
 
+### Video Demo
+
+Berikut adalah rekaman gameplay Math Bowl secara keseluruhan, mencakup menu utama, pemilihan mode, Mode 1 (Tebak Jawaban), dan Mode 2 (Tebak Operasi Matematika) tanpa deteksi tangan (mode keyboard).
+
+https://github.com/Sakaa-Eng/pcvproject/raw/main/docs/videos/demo.mp4
+
+---
+
+### Screenshot
+
 Berikut adalah screenshot gameplay Math Bowl tanpa deteksi tangan (mode keyboard).
 
 ### Menu
