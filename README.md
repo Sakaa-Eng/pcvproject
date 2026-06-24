@@ -250,6 +250,14 @@ Berikut adalah screenshot gameplay Math Bowl tanpa deteksi tangan (mode keyboard
 
 ![Mode 2 Game Over](docs/screenshots/mode2_gameover.png)
 
+---
+
+### Deteksi Tangan
+
+**Deteksi Sarung Tangan Biru** — Memperlihatkan hasil pipeline deteksi tangan (HSV masking, contour filtering) dengan bounding box, center point, dan palm radius.
+
+![Deteksi Tangan](docs/screenshots/deteksi_tangan.png)
+
 
 ## Struktur File
 
